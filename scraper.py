@@ -7,6 +7,7 @@ import requests
 os.environ['SCRAPERWIKI_DATABASE_NAME'] = 'sqlite:///data.sqlite'
 import scraperwiki
 
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 SCRAPE_DATE = datetime.date.today()
@@ -27,10 +28,9 @@ page = 0
 while data:
     for person in data:
         person = process_person(person)
-        logger.info("Recording %(MPID)s: %(FullName)s, %(RepresentingTitle)s for %(Representing)s since %(DateElected)s", person)
+        logger.info("Recording %(MPID)s: %(FullName)s, %(RepresentingTitle)s for "
+            "%(Representing)s since %(DateElected)s", person)
         scraperwiki.sqlite.save(unique_keys=("MPID", "date_scraped"), data=person, table_name="data")
     page += 1
     current_url = APH_BASE_URL + "&page={}".format(page)
     data = json.loads(requests.get(current_url).content)
-
-#    scraperwiki.sqlite.save(unique_keys=('state', 'suburb', 'postcode', 'electorate'), data=rowdata, table_name='data')
