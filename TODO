@@ -1,42 +1,8 @@
 Scrape today's data into sqlite:   
-
-    Notes from https://github.com/openaustralia/openaustralia/issues/648:
-        https://www.aph.gov.au/api/parliamentarian/?page=1&q=&mem=1&par=-1&gen=0&st=1
-        https://www.aph.gov.au/api/parliamentarian/?page=2&q=&mem=1&par=-1&gen=0&st=1
-        https://www.aph.gov.au/api/parliamentarian/?page=3&q=&mem=1&par=-1&gen=0&st=1
-
-        It seems that mem=1 gets Members, mem=-1 gets Senators.
-        par=1 seems to be labor; par=2 seems to be liberal
-        &ele=Aston gets the Member for the electorate Aston
-        &t=K gets members with surnames starting with K
-        gen=1 is male, gen=2 female, gen=0 gives all.
-
-        A minimal url format to iterate over all members seems to be:
-        https://www.aph.gov.au/api/parliamentarian/?q=&mem=0&page=3
-
-    Sample versioning https://sqlalchemy-continuum.readthedocs.io/en/latest/intro.html#basics:
-
-        import sqlalchemy as sa
-        from sqlalchemy_continuum import make_versioned
-
-
-        make_versioned(user_cls=None)
-
-
-        class Article(Base):
-            __versioned__ = {}
-            __tablename__ = 'article'
-
-            id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
-            name = sa.Column(sa.Unicode(255))
-            content = sa.Column(sa.UnicodeText)
-
-
-        # after you have defined all your models, call configure_mappers:
-        sa.orm.configure_mappers()
+✔ Include today's date so that we can look for changes @done(19-05-27 16:46)
 
 Pull existing CSV data from openaustralia-parsers:
-☐ Pull as subrepo
+✔ Copy data from openaustralia-parsers @done(19-05-27 17:18)
 ☐ Read Terms into sqlite
     ☐ First - read in as terms
     ☐ Second pass - read in as eventish terms (event type, event date)
