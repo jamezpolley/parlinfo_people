@@ -14,7 +14,7 @@ SCRAPE_DATE = datetime.date.today()
 APH_BASE_URL = "https://www.aph.gov.au/api/parliamentarian/?q=&mem=0"
 
 
-def process_person(person):
+def process_parlinfo_person(person):
     person["date_scraped"] = SCRAPE_DATE
     timestamp = person['DateElected'].partition("(")[2].rpartition(")")[0]
     timestamp = int(timestamp)/1000
@@ -22,15 +22,18 @@ def process_person(person):
     person["DateElected"] = date_elected
     return person
 
-data = json.loads(requests.get(APH_BASE_URL).content)
-page = 0
+def pull_from_parlinfo():
+    data = json.loads(requests.get(APH_BASE_URL).content)
+    page = 0
 
-while data:
-    for person in data:
-        person = process_person(person)
-        logger.info("Recording %(MPID)s: %(FullName)s, %(RepresentingTitle)s for "
-            "%(Representing)s since %(DateElected)s", person)
-        scraperwiki.sqlite.save(unique_keys=("MPID", "date_scraped"), data=person, table_name="data")
-    page += 1
-    current_url = APH_BASE_URL + "&page={}".format(page)
-    data = json.loads(requests.get(current_url).content)
+    while data:
+        for person in data:
+            person = process_parlinfo_person(person)
+            logger.info("Recording %(MPID)s: %(FullName)s, %(RepresentingTitle)s for "
+                "%(Representing)s since %(DateElected)s", person)
+            scraperwiki.sqlite.save(unique_keys=("MPID", "date_scraped"), data=person, table_name="data")
+        page += 1
+        current_url = APH_BASE_URL + "&page={}".format(page)
+        data = json.loads(requests.get(current_url).content)
+
+pull_from_parlinfo()
