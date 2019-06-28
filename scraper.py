@@ -1,11 +1,14 @@
-import json
-import os
-import logging
+import csv
 import datetime
+import json
+import logging
+import os
+import pprint
 
 import requests
-os.environ['SCRAPERWIKI_DATABASE_NAME'] = 'sqlite:///data.sqlite'
 import scraperwiki
+
+os.environ['SCRAPERWIKI_DATABASE_NAME'] = 'sqlite:///data.sqlite'
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -36,4 +39,16 @@ def pull_from_parlinfo():
         current_url = APH_BASE_URL + "&page={}".format(page)
         data = json.loads(requests.get(current_url).content)
 
-pull_from_parlinfo()
+def read_people_csv():
+    data = []
+    rows = csv.reader(open("data/people.csv"),)
+    for row in rows:
+        pprint.pprint(row)
+        if len(row) >= 3:
+            pprint.pprint(row[0:3])
+            person["oa_id"], person["aph_id"], person["name"] = row[0:3]
+            scraperwiki.sqlite.save(unique_keys=("oa_id","aph_id", "name"), data=person, table_name="oa_person")
+       
+        
+#pull_from_parlinfo()
+read_people_csv()
